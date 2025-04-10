@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyListfy - Uma solução completa para Amazon</title>
+    <style>
+        /* Variáveis de cores */
+        :root {
+            --primary-color: #4fffbd;
+            --secondary-color: #88ffff;
+            --background-color: #fff0df;
+            --text-color: #000000;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --card-background: #ffffff;
+            --success-color: #4CAF50;
+            --error-color: #f44336;
+        }
+
+        /* Reset e estilos gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Estilos do cabeçalho */
+        .header {
+            background: #ffffff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            border-bottom: 1px solid #eee;
+            height: 70px; /* Altura fixa para o header */
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .logo {
+            height: 60px; /* Aumenta o tamanho da logo */
+            width: auto;
+            object-fit: contain;
+            margin-right: 10px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* Container principal */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Estilos para o login */
+        .auth-container {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .auth-container h2 {
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-size: 24px;
+        }
+
+        .auth-container p {
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+
+        .form-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .form-message.success {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: var(--success-color);
+            display: block;
+        }
+
+        .form-message.error {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: var(--error-color);
+            display: block;
+        }
+
+        /* Estilos para a calculadora */
+        .calculator-container {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Botão de logout */
+        .logout-btn {
+            background-color: transparent;
+            border: 1px solid var(--text-color);
+            color: var(--text-color);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Mensagem de boas-vindas */
+        .welcome-message {
+            display: none;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: var(--text-color);
+        }
+
+        /* Estilos da calculadora */
+        .calc-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px;
+        }
+
+        .calc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .calc-header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: var(--text-color);
+        }
+
+        .calculator {
+            display: flex;
+            gap: 20px;
+        }
+
+        .column {
+            flex: 1;
+        }
+
+        .column-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .input-row {
+            display: flex;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .input-row label {
+            width: 100px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .input-row input, .input-row select {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 80px;
+            font-size: 13px;
+        }
+
+        .input-row select {
+            width: 120px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+            margin-left: 10px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        input:disabled + .slider {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background-color: #666;
+        }
+
+        input:disabled:checked + .slider {
+            background-color: var(--primary-color);
+            opacity: 0.7;
+        }
+
+        .input-row label[for="fba-low-price"] {
+            opacity: 0.7;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin: 12px 0 8px 0;
+            color: var(--text-color);
+            font-size: 13px;
+            border-top: 1px solid #eee;
+            padding-top: 8px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .result-label {
+            font-weight: bold;
+        }
+
+        .info-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 16px;
+            font-size: 12px;
+            margin-left: 5px;
+            cursor: help;
+            position: relative;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .info-icon:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .profit-positive {
+            color: green;
+            font-weight: bold;
+        }
+
+        .profit-negative {
+            color: red;
+            font-weight: bold;
+        }
+
+        .dimensions-row {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .dimensions-row input {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 65px; /* Aumentando de 50px para 65px */
+            font-size: 13px;
+        }
+
+        .dimensions-row span {
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        .unit-text {
+            font-size: 12px;
+            color: var(--text-color);
+            margin: 0 5px;
+        }
+
+        .sync-button {
+            background-color: var(--background-color);
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        .sync-button:hover {
+            background-color: var(--primary-color);
+        }
+
+        /* Estilo do botão Custom Cost */
+        .custom-cost-toggle {
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 13px;
+            margin-top: 10px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px var(--shadow-color);
+            border: none;
+            font-weight: 500;
+        }
+
+        .custom-cost-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow-color);
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+        }
+
+        .custom-cost-content {
+            margin-top: 5px;
+            padding: 5px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            display: none;
+            font-size: 12px;
+        }
+
+        .add-custom-cost {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .custom-costs-list {
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .custom-cost-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .remove-cost {
+            color: #cc0000;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .clickable {
+            cursor: pointer;
+            color: var(--text-color);
+            text-decoration: underline;
+        }
+
+        .clickable:hover {
+            color: var(--secondary-color);
+        }
+
+        .tooltip select {
+            background: #666;
+            color: white;
+            border: 1px solid #888;
+            border-radius: 3px;
+            padding: 2px;
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        .tooltip select option {
+            background: #666;
+            color: white;
+        }
+
+        /* Estilos para as abas */
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: var(--background-color);
+            border: 1px solid #ddd;
+            border-bottom: none;
+            margin-right: 5px;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-bottom: 1px solid var(--primary-color);
+            margin-bottom: -1px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        /* Estilos para PPC Calculator */
+        .ppc-calculator {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+        }
+        
+        .ppc-calculator.active {
+            display: block;
+        }
+        
+        .ppc-input-row {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        
+        .ppc-input-row label {
+            width: 150px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        
+        .ppc-input-row input {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100px;
+            font-size: 13px;
+        }
+        
+        .ppc-results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--background-color);
+            border-radius: 4px;
+        }
+        
+        .ppc-result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 8px;
+            background-color: white;
+            border-radius: 4px;
+        }
+        
+        .calculate-ppc-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+        
+        .calculate-ppc-btn:hover {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+        }
+        
+        /* Atualizar estilos das abas */
+        #fees-calculator {
+            display: none;
+        }
+        
+        #fees-calculator.active {
+            display: block;
+        }
+        
+        #ppc-calculator {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+        }
+        
+        #ppc-calculator.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <div class="header">
+        <div class="logo-container">
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/mylistfy%20logo-YggJBSjFe6O0r5RQq90pEuHNFRDdi4.png" alt="MyListfy Logo" class="logo">
+        </div>
+        <button id="logout-btn" class="logout-btn" style="display: none;">Sair</button>
+    </div>
+
+    <!-- Container principal -->
+    <div class="main-container">
+        <!-- Mensagem de boas-vindas -->
+        <div id="welcome-message" class="welcome-message">
+            Bem-vindo(a), <span id="user-name">Usuário</span>!
+        </div>
+
+        <!-- Container de autenticação -->
+        <div id="auth-container" class="auth-container">
+            <h2>Uma solução MyListfy!</h2>
+            <p>Entre com suas credenciais para acessar a calculadora</p>
+            
+            <!-- Formulário de login -->
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" class="form-control" placeholder="Seu email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="Sua senha" required>
+                </div>
+                
+                <button type="submit" class="btn">Entrar</button>
+                
+                <div id="login-message" class="form-message"></div>
+            </form>
+        </div>
+
+        <!-- Container da calculadora -->
+        <div id="calculator-container" class="calculator-container">
+            <div class="calc-container">
+                <div class="calc-header">
+                    <h1>MyCalc - Uma solução MyListfy</h1>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('fees')">MyCalc</div>
+                    <div class="tab" onclick="switchTab('ppc')">MyPPC Calculator</div>
+                </div>
+                
+                <div id="fees-calculator" class="active">
+                    <div class="calculator">
+                        <!-- FBM Column -->
+                        <div class="column">
+                            <div class="column-header">FBM (Fulfilled by Merchant)</div>
+                            
+                            <div class="input-row">
+                                <label for="fbm-sell-price">Sell Price</label>
+                                <span>$</span>
+                                <input type="number" id="fbm-sell-price" step="0.01" value="27.22">
+                                <div class="sync-button" onclick="syncPrices('fbm-sell-price', 'fba-sell-price')">⇄</div>
+                            </div>
+                            
+                            <div class="input-row">
+                                <label for="fbm-buy-cost">Buy Cost</label>
+                                <span>$</span>
+                                <input type="number" id="fbm-buy-cost" step="0.01" value="14.00">
+                                <div class="sync-button" onclick="syncPrices('fbm-buy-cost', 'fba-buy-cost')">⇄</div>
+                            </div>
+                            
+                            <div class="input-row">
+                                <label for="fbm-shipping-cost">FBM Ship</label>
+                                <span>$</span>
+                                <input type="number" id="fbm-shipping-cost" step="0.01" value="12.74">
+                            </div>
+                            
+                            <div class="input-row">
+                                <label for="fbm-category">Category</label>
+                                <select id="fbm-category">
+                                    <option value="amazon-devices">Amazon Devices</option>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="computers" selected>Computers</option>
+                                    <option value="clothing">Clothing</option>
+                                    <option value="beauty">Beauty</option>
+                                    <option value="furniture">Furniture</option>
+                                    <option value="jewelry">Jewelry</option>
+                                    <option value="toys">Toys & Games</option>
+                                    <option value="sports">Sports</option>
+                                    <option value="tools">Tools</option>
+                                    <option value="pet">Pet Shop</option>
+                                    <option value="appliances">Appliances</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-row">
+                                <label for="fbm-prep-fee">Prep Fee</label>
+                                <span>$</span>
+                                <input type="number" id="fbm-prep-fee" step="0.01" value="2.20">
+                            </div>
+                            
+                            <div class="custom-cost-toggle" onclick="toggleCustomCost('fbm')">+ Custom Cost</div>
+                            <div id="fbm-custom-cost-content" class="custom-cost-content">
+                                <div class="input-row">
+                                    <label for="fbm-custom-cost-name">Name:</label>
+                                    <input type="text" id="fbm-custom-cost-name" value="Custom Cost">
+                                </div>
+                                <div class="input-row">
+                                    <label for="fbm-custom-cost-value">Value ($):</label>
+                                    <input type="number" id="fbm-custom-cost-value" step="0.01" value="0">
+                                </div>
+                                <button class="add-custom-cost" onclick="addCustomCost('fbm')">Add</button>
+                            </div>
+                            
+                            <div id="fbm-custom-costs-list" class="custom-costs-list"></div>
+                            
+                            <div class="section-title">Results</div>
+                            
+                            <div class="result-row">
+                                <span class="result-label">Profit</span>
+                                <span>
+                                    <span id="fbm-profit" class="profit-negative">$-17.87</span>
+                                    <span class="info-icon">i
+                                        <span class="tooltip" id="fbm-profit-tooltip">
+                                            Profit = Sell Price - (Referral Fee + Buy Cost + Shipping Cost + Prep Fee + Custom Costs)
+                                        </span>
+                                    </span>
+                                </span>
+                            </div>
+                            
+                            <div class="result-row">
+                                <span class="result-label">ROI</span>
+                                <span>
+                                    <span id="fbm-roi" class="profit-negative">-66.83%</span>
+                                    <span class="info-icon">i
+                                        <span class="tooltip">
+                                            ROI = (Profit / Investment) × 100%<br><br>
+                                            Escolha o método de cálculo:<br>
+                                            <select id="fbm-roi-method" onchange="calculateAll()">
+                                                <option value="buy-cost">Investment = Buy Cost</option>
+                                                <option value="buy-cost-custom" selected>Investment = Buy Cost + Custom Costs</option>
+                                                <option value="total-cost">Investment = Buy Cost + Custom Costs + Amazon Fees</option>
+                                            </select><br><br>
+                                            <span id="fbm-roi-tooltip-detail"></span>
+                                        </span>
+                                    </span>
+                                </span>
+                            </div>
+                            
+                            <div class="result-row">
+                                <span class="result-label">Margin</span>
+                                <span>
+                                    <span id="fbm-margin" class="profit-negative">-185.37%</span>
+                                    <span class="info-icon">i
+                                        <span class="tooltip" id="fbm-margin-tooltip">
+                                            Margin = (Profit / Sell Price) × 100%
+                                        </span>
+                                    </span>
+                                </span>
+                            </div>
+                            
+                            <div class="result-row">
+                                <span class="result-label">Break-even Price</span>
+                                <span id="fbm-breakeven" class="clickable" onclick="updateSellPrice('fbm')">$37.57</span>
+                            </div>
+                        </div>
+                        
+                        <!-- FBA Column -->
+                        <div class="column">
+                            <div class="column-header">FBA (Fulfilled by Amazon)</div>
+                            
+                            <div class="input-row">
+                                <label for="fba-sell-price">Sell Price</label>
+                                <span>$</span>
+                                <input type="number" id="fba-sell-price" step="0.01" value="27.22">
+                                <div class="sync-button" onclick="syncPrices('fba-sell-price', 'fbm-sell-price')">⇄</div>
+                            </div>
+                            
+                            <div class="input-row">
+                                <label for="fba-buy-cost">Buy Cost</label>
+                                <span>$</span>
+                                <input type="number" id="fba-buy-cost" step="0.01" value="14.00">
+                                <div class="sync-button" onclick="syncPrices('fba-buy-cost', 'fbm-buy-cost')">⇄</div>
+                            </div>
+                            
+                            <div class="input-row">
+                                <label for="fba-category">Category</label>
+                                <select id="fba-category">
+                                    <option value="amazon-devices">Amazon Devices</option>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="computers" selected>Computers</option>
+                                    <option value="clothing">Clothing</option>
+                                    <option value="beauty">Beauty</option>
+                                    <option value="furniture">Furniture</option>
+                                    <option value="jewelry">Jewelry</option>
+                                    <option value="toys">Toys & Games</option>
+                                    <option value="sports">Sports</option>
+                                    <option value="tools">Tools</option>
+                                    <option value="pet">Pet Shop</option>
+                                    <option value="appliances">Appliances</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <span class="info-icon">i
+                                    <span class="tooltip">Clothing category will automatically use Apparel rates</span>
+                                </span>
+                            </div>
+                            
+                            <div class="section-title">Package Dimensions</div>
+                            
+                            <div class="dimensions-row">
+                                <input type="number" id="fba-length" step="0.1" value="12" placeholder="L">
+                                <span>×</span>
+                                <input type="number" id="fba-width" step="0.1" value="8" placeholder="W">
+                                <span>×</span>
+                                <input type="number" id="fba-height" step="0.1" value="4" placeholder="H">
+                                <span class="unit-text">in</span>
+                            </div>
+                            
+                            <div class="input-row">
+                                <label for="fba-weight">Prod. Weight</label>
+                                <input type="number" id="fba-weight" step="0.01" value="1.5">
+                                <span class="unit-text">lb</span>
+                            </div>
+                            
+                            <div class="input-row">
+                                <label for="fba-storage-period">Storage Period</label>
+                                <select id="fba-storage-period">
+                                    <option value="jan-sept" selected>Jan-Sept</option>
+                                    <option value="oct-dec">Oct-Dec</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-row">
+                                <label for="fba-aged-days">Aged Inventory</label>
+                                <select id="fba-aged-days">
+                                    <option value="0-180">0-180 days</option>
+                                    <option value="181-365" selected>181-365 days</option>
+                                    <option value="365+">Over 365 days</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-row">
+                                <label for="fba-inbound-shipping">Inbound Ship</label>
+                                <span>$</span>
+                                <input type="number" id="fba-inbound-shipping" step="0.01" value="0.33" disabled style="opacity: 0.7; cursor: not-allowed;">
+                                <span class="info-icon">i
+                                    <span class="tooltip">
+                                        Calculado automaticamente baseado no peso:<br>
+                                        - $0.20 por lb<br><br>
+                                        Exemplo:<br>
+                                        • 1.5 lb = $0.30<br>
+                                        • 2.0 lb = $0.40<br>
+                                        • 3.0 lb = $0.60<br>
+                                        • 5.0 lb = $1.00<br>
+                                        • 10.0 lb = $2.00
+                                    </span>
+                                </span>
+                            </div>
+                            
+                            <div class="input-row">
+                                <label for="fba-dangerous">Dangerous</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="fba-dangerous">
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="info-icon">i
+                                    <span class="tooltip">
+                                        Taxa adicional de $0.21 por unidade para itens perigosos<br><br>
+                                        Unidades: <input type="number" id="fba-dangerous-units" value="1" min="1" step="1" style="width: 60px; background: #666; color: white; border: 1px solid #888; border-radius: 3px; padding: 2px;"><br><br>
+                                        Total: $<span id="fba-dangerous-total">0.21</span>
+                                    </span>
+                                </span>
+                            </div>
+                            
+                            <div class="input-row">
+                                <label for="fba-low-price">Low Price</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="fba-low-price" disabled>
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="info-icon">i
+                                    <span class="tooltip">Automaticamente habilitado para produtos com preço de venda menor que $10</span>
+                                </span>
+                            </div>
+                            
+                            <div class="custom-cost-toggle" onclick="toggleCustomCost('fba')">+ Custom Cost</div>
+                            <div id="fba-custom-cost-content" class="custom-cost-content">
+                                <div class="input-row">
+                                    <label for="fba-custom-cost-name">Name:</label>
+                                    <input type="text" id="fba-custom-cost-name" value="Custom Cost">
+                                </div>
+                                <div class="input-row">
+                                    <label for="fba-custom-cost-value">Value ($):</label>
+                                    <input type="number" id="fba-custom-cost-value" step="0.01" value="0">
+                                </div>
+                                <button class="add-custom-cost" onclick="addCustomCost('fba')">Add</button>
+                            </div>
+                            
+                            <div id="fba-custom-costs-list" class="custom-costs-list"></div>
+                            
+                            <div class="section-title">Results</div>
+                            
+                            <div class="result-row">
+                                <span class="result-label">Profit</span>
+                                <span>
+                                    <span id="fba-profit" class="profit-negative">$-10.35</span>
+                                    <span class="info-icon">i
+                                        <span class="tooltip" id="fba-profit-tooltip">
+                                            Profit = Sell Price - (Referral Fee + Fulfillment Fee + Storage Fee + Buy Cost + Inbound Shipping + Prep Fee + Custom Costs)
+                                        </span>
+                                    </span>
+                                </span>
+                            </div>
+                            
+                            <div class="result-row">
+                                <span class="result-label">ROI</span>
+                                <span>
+                                    <span id="fba-roi" class="profit-negative">-72.21%</span>
+                                    <span class="info-icon">i
+                                        <span class="tooltip">
+                                            ROI = (Profit / Investment) × 100%<br><br>
+                                            Escolha o método de cálculo:<br>
+                                            <select id="fba-roi-method" onchange="calculateAll()">
+                                                <option value="buy-cost">Investment = Buy Cost</option>
+                                                <option value="buy-cost-custom" selected>Investment = Buy Cost + Custom Costs</option>
+                                                <option value="total-cost">Investment = Buy Cost + Custom Costs + Amazon Fees</option>
+                                            </select><br><br>
+                                            <span id="fba-roi-tooltip-detail"></span>
+                                        </span>
+                                    </span>
+                                </span>
+                            </div>
+                            
+                            <div class="result-row">
+                                <span class="result-label">Margin</span>
+                                <span>
+                                    <span id="fba-margin" class="profit-negative">-107.37%</span>
+                                    <span class="info-icon">i
+                                        <span class="tooltip" id="fba-margin-tooltip">
+                                            Margin = (Profit / Sell Price) × 100%
+                                        </span>
+                                    </span>
+                                </span>
+                            </div>
+                            
+                            <div class="result-row">
+                                <span class="result-label">Break-even Price</span>
+                                <span id="fba-breakeven" class="clickable" onclick="updateSellPrice('fba')">$45.09</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="ppc-calculator" class="ppc-calculator">
+                    <div class="column-header">Amazon PPC Calculator</div>
+                    
+                    <div class="ppc-input-row">
+                        <label for="daily-budget">Daily Budget ($)</label>
+                        <input type="number" id="daily-budget" min="0" step="0.01" value="10">
+                        <span class="info-icon">i
+                            <span class="tooltip">
+                                Orçamento diário para suas campanhas PPC.
+                            </span>
+                        </span>
+                    </div>
+
+                    <div class="ppc-input-row">
+                        <label for="campaign-days">Campaign Days</label>
+                        <input type="number" id="campaign-days" min="1" value="30">
+                        <span class="info-icon">i
+                            <span class="tooltip">
+                                Número de dias que sua campanha irá rodar.
+                            </span>
+                        </span>
+                    </div>
+
+                    <div class="ppc-input-row">
+                        <label for="target-acos">Target ACoS (%)</label>
+                        <input type="number" id="target-acos" min="0" max="100" value="25">
+                        <span class="info-icon">i
+                            <span class="tooltip">
+                                ACoS alvo (Advertising Cost of Sales).<br>
+                                ACoS = (Gasto em Anúncios / Vendas) × 100
+                            </span>
+                        </span>
+                    </div>
+
+                    <div class="ppc-input-row">
+                        <label for="avg-cpc">Average CPC ($)</label>
+                        <input type="number" id="avg-cpc" min="0" step="0.01" value="0.50">
+                        <span class="info-icon">i
+                            <span class="tooltip">
+                                Custo médio por clique em suas campanhas.
+                            </span>
+                        </span>
+                    </div>
+
+                    <div class="ppc-input-row">
+                        <label for="selling-price">Selling Price ($)</label>
+                        <input type="number" id="selling-price" step="0.01" value="0">
+                        <span class="info-icon">i
+                            <span class="tooltip">
+                                O preço pelo qual você está vendendo (ou pretende vender) o produto na Amazon.
+                            </span>
+                        </span>
+                    </div>
+                    
+                    <div class="ppc-input-row">
+                        <label for="landed-cost">Landed Cost ($)</label>
+                        <input type="number" id="landed-cost" step="0.01" value="0">
+                        <span class="info-icon">i
+                            <span class="tooltip">
+                                Custo total do produto incluindo fabricação, envio, impostos de importação e taxas.
+                            </span>
+                        </span>
+                    </div>
+                    
+                    <div class="ppc-input-row">
+                        <label for="amazon-fees">Amazon Fees ($)</label>
+                        <input type="number" id="amazon-fees" step="0.01" value="0">
+                        <span class="info-icon">i
+                            <span class="tooltip">
+                                Total de taxas da Amazon incluindo taxa de referência (geralmente 15%) e taxas de fulfillment.
+                            </span>
+                        </span>
+                    </div>
+                    
+                    <div class="ppc-input-row">
+                        <label for="conversion-rate">Conversion Rate (%)</label>
+                        <input type="number" id="conversion-rate" step="0.01" value="10">
+                        <span class="info-icon">i
+                            <span class="tooltip">
+                                Taxa de conversão (Unit Session Percentage).<br>
+                                Pode ser encontrada em:<br>
+                                Reports > Business Reports > Detail Page Sales and Traffic
+                            </span>
+                        </span>
+                    </div>
+                    
+                    <div class="button-group" style="margin: 20px 0;">
+                        <button class="calculate-ppc-btn" onclick="calculatePPC()">Calculate</button>
+                        <button class="calculate-ppc-btn" onclick="resetPPC()" style="background-color: #666;">Reset</button>
+                    </div>
+                    
+                    <div class="ppc-results">
+                        <div class="section-title">Campaign Metrics</div>
+                        
+                        <div class="ppc-result-row">
+                            <span class="result-label">Total Budget</span>
+                            <span id="total-budget">$0.00</span>
+                            <span class="info-icon">i
+                                <span class="tooltip">
+                                    Orçamento total da campanha (Daily Budget × Campaign Days)
+                                </span>
+                            </span>
+                        </div>
+
+                        <div class="ppc-result-row">
+                            <span class="result-label">Daily Clicks</span>
+                            <span id="daily-clicks">0</span>
+                            <span class="info-icon">i
+                                <span class="tooltip">
+                                    Número estimado de cliques por dia (Daily Budget ÷ Avg CPC)
+                                </span>
+                            </span>
+                        </div>
+
+                        <div class="ppc-result-row">
+                            <span class="result-label">Total Clicks</span>
+                            <span id="total-clicks">0</span>
+                            <span class="info-icon">i
+                                <span class="tooltip">
+                                    Total de cliques estimados na campanha (Daily Clicks × Campaign Days)
+                                </span>
+                            </span>
+                        </div>
+
+                        <div class="ppc-result-row">
+                            <span class="result-label">Required Sales</span>
+                            <span id="required-sales">$0.00</span>
+                            <span class="info-icon">i
+                                <span class="tooltip">
+                                    Vendas necessárias para atingir o Target ACoS
+                                </span>
+                            </span>
+                        </div>
+
+                        <div class="section-title" style="margin-top: 20px;">Profitability Metrics</div>
+
+                        <div class="ppc-result-row">
+                            <span class="result-label">Net Profit per Unit</span>
+                            <span id="net-profit">$0.00</span>
+                            <span class="info-icon">i
+                                <span class="tooltip">
+                                    Lucro estimado por unidade vendida = Preço de Venda - (Custo + Taxas Amazon)
+                                </span>
+                            </span>
+                        </div>
+                        
+                        <div class="ppc-result-row">
+                            <span class="result-label">Breakeven ACoS</span>
+                            <span id="breakeven-acos">0%</span>
+                            <span class="info-icon">i
+                                <span class="tooltip">
+                                    ACoS no qual suas campanhas PPC não terão lucro nem prejuízo.<br>
+                                    Também representa sua margem líquida.
+                                </span>
+                            </span>
+                        </div>
+                        
+                        <div class="ppc-result-row">
+                            <span class="result-label">Clicks per Sale</span>
+                            <span id="clicks-per-sale">0</span>
+                            <span class="info-icon">i
+                                <span class="tooltip">
+                                    Número médio de cliques necessários para gerar uma venda,<br>
+                                    baseado na sua taxa de conversão.
+                                </span>
+                            </span>
+                        </div>
+                        
+                        <div class="ppc-result-row">
+                            <span class="result-label">Max Bid for Breakeven</span>
+                            <span id="max-bid">$0.00</span>
+                            <span class="info-icon">i
+                                <span class="tooltip">
+                                    Lance máximo para atingir o ponto de equilíbrio,<br>
+                                    considerando sua taxa de conversão atual.
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Banco de dados simulado para usuários
+        let users = [
+            { name: 'Matheus', email: 'admin@mylistfy.com', password: 'admin123' }
+        ];
+        
+        // Usuário atual
+        let currentUser = null;
+        
+        // Elementos DOM
+        const authContainer = document.getElementById('auth-container');
+        const calculatorContainer = document.getElementById('calculator-container');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const userNameSpan = document.getElementById('user-name');
+        const logoutBtn = document.getElementById('logout-btn');
+        const loginForm = document.getElementById('login-form');
+        const loginMessage = document.getElementById('login-message');
+        
+        // Evento de envio do formulário de login
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Verificar credenciais
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                // Login bem-sucedido
+                currentUser = user;
+                showCalculator();
+                loginMessage.textContent = '';
+            } else {
+                // Login falhou
+                loginMessage.textContent = 'Email ou senha incorretos.';
+                loginMessage.className = 'form-message error';
+            }
+        });
+        
+        // Evento de logout
+        logoutBtn.addEventListener('click', function() {
+            currentUser = null;
+            showLoginForm();
+        });
+        
+        // Função para mostrar a calculadora
+        function showCalculator() {
+            authContainer.style.display = 'none';
+            calculatorContainer.style.display = 'block';
+            welcomeMessage.style.display = 'block';
+            logoutBtn.style.display = 'block';
+            
+            // Atualizar nome do usuário
+            userNameSpan.textContent = currentUser.name;
+            
+            // Inicializar calculadora
+            if (typeof calculateAll === 'function') {
+                calculateAll();
+            }
+        }
+        
+        // Função para mostrar o formulário de login
+        function showLoginForm() {
+            authContainer.style.display = 'block';
+            calculatorContainer.style.display = 'none';
+            welcomeMessage.style.display = 'none';
+            logoutBtn.style.display = 'none';
+            
+            // Limpar formulário
+            loginForm.reset();
+            loginMessage.textContent = '';
+            loginMessage.className = 'form-message';
+        }
+        
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar o formulário de login inicialmente
+            showLoginForm();
+        });
+
+        // Global variables for custom costs
+        let fbaCustomCosts = [];
+        let fbmCustomCosts = [];
+        
+        // Category fee percentages
+        const categoryFees = {
+            'amazon-devices': 0.45,
+            'electronics': 0.08,
+            'computers': 0.08,
+            'clothing': 0.17, // Taxa padrão, será ajustada no cálculo
+            'beauty': 0.08,
+            'furniture': 0.15,
+            'jewelry': 0.20,
+            'toys': 0.15,
+            'sports': 0.15,
+            'tools': 0.15,
+            'pet': 0.22,
+            'appliances': 0.08,
+            'other': 0.15
+        };
+        
+        // Minimum referral fees
+        const minReferralFees = {
+            'amazon-devices': 0.30,
+            'electronics': 0.30,
+            'computers': 0.30,
+            'clothing': 0.30,
+            'beauty': 0.30,
+            'furniture': 0.30,
+            'jewelry': 2.00,
+            'toys': 0.30,
+            'sports': 0.30,
+            'tools': 0.30,
+            'pet': 0.30,
+            'appliances': 0.30,
+            'other': 0.30
+        };
+        
+        // FBA fulfillment fees
+        const fulfillmentFees = {
+            'small-standard': {
+                '0.25': 2.50,
+                '0.94': 3.21
+            },
+            'large-standard': {
+                '1.5': 5.13,
+                '2': 5.37
+            },
+            'large-oversize': {
+                '3': 6.04
+            }
+        };
+        
+        // FBA storage fees per cubic foot
+        const storageFees = {
+            'jan-sept': {
+                'standard': 0.78,
+                'oversize': 0.56
+            },
+            'oct-dec': {
+                'standard': 2.40,
+                'oversize': 1.40
+            }
+        };
+        
+        // FBA aged inventory surcharge
+        function calculateAgedInventorySurcharge(cubicFeet, days) {
+            const surchargeRates = {
+            '0-180': 0,
+            '181-365': 1.89,
+            '365+': 2.21
+        };
+            
+            return cubicFeet * surchargeRates[days];
+        }
+        
+        // FBA removal order fees
+        const removalOrderFees = {
+            'small-standard': 0.55,
+            'large-standard': 0.60,
+            'large-oversize': 14.32
+        };
+        
+        // Toggle custom cost sections
+        function toggleCustomCost(type) {
+            const content = document.getElementById(`${type}-custom-cost-content`);
+            content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        // Sync prices between FBA and FBM
+        function syncPrices(sourceId, targetId) {
+            document.getElementById(targetId).value = document.getElementById(sourceId).value;
+            calculateAll();
+        }
+        
+        // Add custom cost
+        function addCustomCost(type) {
+            const name = document.getElementById(`${type}-custom-cost-name`).value;
+            const value = parseFloat(document.getElementById(`${type}-custom-cost-value`).value);
+            
+            if (name && !isNaN(value)) {
+                if (type === 'fba') {
+                    fbaCustomCosts.push({ name, value });
+                    renderCustomCosts('fba');
+                } else {
+                    fbmCustomCosts.push({ name, value });
+                    renderCustomCosts('fbm');
+                }
+                
+                document.getElementById(`${type}-custom-cost-name`).value = 'Custom Cost';
+                document.getElementById(`${type}-custom-cost-value`).value = 0;
+                
+                calculateAll();
+            }
+        }
+        
+        // Remove custom cost
+        function removeCustomCost(type, index) {
+            if (type === 'fba') {
+                fbaCustomCosts.splice(index, 1);
+                renderCustomCosts('fba');
+            } else {
+                fbmCustomCosts.splice(index, 1);
+                renderCustomCosts('fbm');
+            }
+            
+            calculateAll();
+        }
+        
+        // Render custom costs list
+        function renderCustomCosts(type) {
+            const listElement = document.getElementById(`${type}-custom-costs-list`);
+            listElement.innerHTML = '';
+            
+            const costs = type === 'fba' ? fbaCustomCosts : fbmCustomCosts;
+            
+            costs.forEach((cost, index) => {
+                const item = document.createElement('div');
+                item.className = 'custom-cost-item';
+                item.innerHTML = `
+                    <span>${cost.name}: $${cost.value.toFixed(2)}</span>
+                    <span class="remove-cost" onclick="removeCustomCost('${type}', ${index})">×</span>
+                `;
+                listElement.appendChild(item);
+            });
+        }
+        
+        // Calculate referral fee
+        function calculateReferralFee(price, category) {
+            const minFee = minReferralFees[category];
+            
+            // Special case for clothing
+            if (category === 'clothing') {
+                if (price < 15) {
+                    return Math.max(price * 0.05, minFee); // 5% para preços < $15
+                } else if (price >= 15 && price <= 20) {
+                    return Math.max(price * 0.10, minFee); // 10% para preços entre $15-$20
+                }
+                return Math.max(price * 0.17, minFee); // 17% para preços > $20
+            }
+            
+            const percentage = categoryFees[category];
+            return Math.max(price * percentage, minFee);
+        }
+        
+        // Calculate cubic feet from dimensions
+        function calculateCubicFeet(length, width, height) {
+            return (length * width * height) / 1728;
+        }
+        
+        // Determine size tier based on dimensions and weight
+        function determineSizeTier(length, width, height, weight) {
+            // Convert dimensions to numbers
+            length = parseFloat(length);
+            width = parseFloat(width);
+            height = parseFloat(height);
+            weight = parseFloat(weight);
+            
+            // Small Standard: ≤15x12x0.75 inches
+            if (length <= 15 && width <= 12 && height <= 0.75) {
+                return 'small-standard';
+            }
+            
+            // Large Standard: ≤18x14x8 inches
+            if (length <= 18 && width <= 14 && height <= 8) {
+                return 'large-standard';
+            }
+            
+            // Small Oversize: ≤60x30x12 inches
+            if (length <= 60 && width <= 30 && height <= 12 && weight <= 70) {
+                return 'small-oversize';
+            }
+
+            // Medium Oversize: ≤108x60x30 inches
+            if (length <= 108 && width <= 60 && height <= 30 && weight <= 150) {
+                return 'medium-oversize';
+            }
+
+            // Large Oversize: ≤108x60x30 inches
+            if (length <= 108 && width <= 60 && height <= 30 && weight <= 150) {
+            return 'large-oversize';
+            }
+            
+            // Special Oversize: Anything larger
+            return 'special-oversize';
+        }
+
+        // Calculate inbound shipping cost based on weight
+        function calculateInboundShippingCost(weight) {
+            return weight * 0.20; // $0.20 por lb
+        }
+        
+        // Calculate fulfillment fee
+        function calculateFulfillmentFee(weight, sizeTier, isApparel, isLowPrice, isDangerous) {
+            // Converter peso para onças se menor que 1 lb
+            const weightInOz = weight < 1 ? weight * 16 : weight;
+            
+            let fee = 0;
+            
+            // Define as taxas baseadas no tipo (Apparel/Non-apparel) e se é Low-Price
+            const rates = {
+                'non-apparel': {
+                    'normal': {
+                        'small-standard': {
+                            '2': 3.06,
+                            '4': 3.15,
+                            '6': 3.24,
+                            '8': 3.33,
+                            '10': 3.43,
+                            '12': 3.53,
+                            '14': 3.60,
+                            '16': 3.65
+                        },
+                        'large-standard': {
+                            '4': 3.68,
+                            '8': 3.90,
+                            '12': 4.15,
+                            '16': 4.55,
+                            '1.25': 4.99,
+                            '1.5': 5.13,
+                            '1.75': 5.52,
+                            '2': 5.77,
+                            '2.25': 5.87,
+                            '2.5': 6.05,
+                            '2.75': 6.21,
+                            '3': 6.62,
+                            '20': 6.92
+                        }
+                    },
+                    'low-price': {
+                        'small-standard': {
+                            '2': 2.29,
+                            '4': 2.38,
+                            '6': 2.47,
+                            '8': 2.56,
+                            '10': 2.66,
+                            '12': 2.76,
+                            '14': 2.83,
+                            '16': 2.88
+                        },
+                        'large-standard': {
+                            '4': 2.91,
+                            '8': 3.13,
+                            '12': 3.38,
+                            '16': 3.78,
+                            '1.25': 4.22,
+                            '1.5': 4.60,
+                            '1.75': 4.75,
+                            '2': 5.00,
+                            '2.25': 5.10,
+                            '2.5': 5.28,
+                            '2.75': 5.44,
+                            '3': 5.85,
+                            '20': 6.15
+                        }
+                    }
+                },
+                'apparel': {
+                    'normal': {
+                        'small-standard': {
+                            '4': 3.27,
+                            '8': 3.42,
+                            '12': 3.72,
+                            '16': 3.98
+                        },
+                        'large-standard': {
+                            '4': 4.25,
+                            '8': 4.45,
+                            '12': 4.67,
+                            '16': 5.12,
+                            '1.5': 5.90,
+                            '2': 6.14,
+                            '2.5': 6.60,
+                            '3': 6.81,
+                            '20': 6.92
+                        }
+                    },
+                    'low-price': {
+                        'small-standard': {
+                            '4': 2.50,
+                            '8': 2.65,
+                            '12': 2.95,
+                            '16': 3.21
+                        },
+                        'large-standard': {
+                            '4': 3.48,
+                            '8': 3.68,
+                            '12': 3.90,
+                            '16': 4.35,
+                            '1.5': 5.13,
+                            '2': 5.37,
+                            '2.5': 5.83,
+                            '3': 6.04,
+                            '20': 6.15
+                        }
+                    }
+                }
+            };
+
+            // Taxas para produtos volumosos (iguais para apparel e non-apparel)
+            const oversizeRates = {
+                'normal': {
+                    'large-bulky': {
+                        base: 9.61,
+                        extra: 0.38,
+                        limit: 50
+                    },
+                    'extra-large': {
+                        base: 26.33,
+                        extra: 0.38,
+                        limit: 50,
+                        next: {
+                            base: 40.12,
+                            extra: 0.75,
+                            start: 51,
+                            limit: 70,
+                            next: {
+                                base: 54.81,
+                                extra: 0.75,
+                                start: 71,
+                                limit: 150,
+                                next: {
+                                    base: 194.95,
+                                    extra: 0.19,
+                                    start: 151
+                                }
+                            }
+                        }
+                    }
+                },
+                'low-price': {
+                    'large-bulky': {
+                        base: 8.84,
+                        extra: 0.38,
+                        limit: 50
+                    },
+                    'extra-large': {
+                        base: 25.56,
+                        extra: 0.38,
+                        limit: 50,
+                        next: {
+                            base: 39.35,
+                            extra: 0.75,
+                            start: 51,
+                            limit: 70,
+                            next: {
+                                base: 54.04,
+                                extra: 0.75,
+                                start: 71,
+                                limit: 150,
+                                next: {
+                                    base: 194.18,
+                                    extra: 0.19,
+                                    start: 151
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            const type = isApparel ? 'apparel' : 'non-apparel';
+            const priceType = isLowPrice ? 'low-price' : 'normal';
+
+            if (sizeTier === 'small-standard' || sizeTier === 'large-standard') {
+                const type = isApparel ? 'apparel' : 'non-apparel';
+                const priceType = isLowPrice ? 'low-price' : 'normal';
+                const sizeRates = rates[type][priceType][sizeTier];
+                
+                // Para produtos standard, encontrar a taxa apropriada baseada no peso
+                if (sizeTier === 'small-standard') {
+                    if (type === 'non-apparel') {
+                        if (weightInOz <= 2) fee = sizeRates['2'];
+                        else if (weightInOz <= 4) fee = sizeRates['4'];
+                        else if (weightInOz <= 6) fee = sizeRates['6'];
+                        else if (weightInOz <= 8) fee = sizeRates['8'];
+                        else if (weightInOz <= 10) fee = sizeRates['10'];
+                        else if (weightInOz <= 12) fee = sizeRates['12'];
+                        else if (weightInOz <= 14) fee = sizeRates['14'];
+                        else if (weightInOz <= 16) fee = sizeRates['16'];
+                    } else { // apparel
+                        if (weightInOz <= 4) fee = sizeRates['4'];
+                        else if (weightInOz <= 8) fee = sizeRates['8'];
+                        else if (weightInOz <= 12) fee = sizeRates['12'];
+                        else if (weightInOz <= 16) fee = sizeRates['16'];
+                    }
+                } else { // large-standard
+                    if (type === 'non-apparel') {
+                        if (weight <= 0.25) fee = sizeRates['4'];
+                        else if (weight <= 0.5) fee = sizeRates['8'];
+                        else if (weight <= 0.75) fee = sizeRates['12'];
+                        else if (weight <= 1) fee = sizeRates['16'];
+                        else if (weight <= 1.25) fee = sizeRates['1.25'];
+                        else if (weight <= 1.5) fee = sizeRates['1.5'];
+                        else if (weight <= 1.75) fee = sizeRates['1.75'];
+                        else if (weight <= 2) fee = sizeRates['2'];
+                        else if (weight <= 2.25) fee = sizeRates['2.25'];
+                        else if (weight <= 2.5) fee = sizeRates['2.5'];
+                        else if (weight <= 2.75) fee = sizeRates['2.75'];
+                        else if (weight <= 3) fee = sizeRates['3'];
+                        else {
+                            const baseRate = sizeRates['20'];
+                            const extraWeight = Math.max(0, weight - 3);
+                            fee = baseRate + (Math.ceil(extraWeight * 4) * 0.08); // $0.08 por 4 oz
+                        }
+                    } else { // apparel
+                        if (weight <= 0.25) fee = sizeRates['4'];
+                        else if (weight <= 0.5) fee = sizeRates['8'];
+                        else if (weight <= 0.75) fee = sizeRates['12'];
+                        else if (weight <= 1) fee = sizeRates['16'];
+                        else if (weight <= 1.5) fee = sizeRates['1.5'];
+                        else if (weight <= 2) fee = sizeRates['2'];
+                        else if (weight <= 2.5) fee = sizeRates['2.5'];
+                        else if (weight <= 3) fee = sizeRates['3'];
+                        else {
+                            const baseRate = sizeRates['20'];
+                            const extraWeight = Math.max(0, weight - 3);
+                            fee = baseRate + (Math.ceil(extraWeight * 2) * 0.16); // $0.16 por meio lb
+                        }
+                    }
+                }
+            } else {
+                // Para produtos volumosos
+                const sizeRates = oversizeRates[priceType][sizeTier];
+                
+                if (weight <= sizeRates.limit) {
+                    fee = sizeRates.base + (weight * sizeRates.extra);
+                } else if (sizeRates.next) {
+                    let currentRate = sizeRates.next;
+                    while (currentRate) {
+                        if (weight <= currentRate.limit || !currentRate.limit) {
+                            const extraWeight = weight - (currentRate.start - 1);
+                            fee = currentRate.base + (extraWeight * currentRate.extra);
+                            break;
+                        }
+                        currentRate = currentRate.next;
+                    }
+                }
+            }
+            
+            // Adiciona taxa para itens perigosos
+            if (isDangerous) {
+                const dangerousUnits = parseInt(document.getElementById('fba-dangerous-units').value) || 1;
+                fee += 0.21 * dangerousUnits;
+            }
+            
+            return fee;
+        }
+        
+        // Calculate storage fee
+        function calculateStorageFee(cubicFeet, period, sizeTier) {
+            // Determine if the item is standard or oversize
+            const isStandard = sizeTier === 'small-standard' || sizeTier === 'large-standard';
+            const sizeCategory = isStandard ? 'standard' : 'oversize';
+            
+            return cubicFeet * storageFees[period][sizeCategory];
+        }
+        
+        // Calculate removal order fee
+        function calculateRemovalOrderFee(sizeTier) {
+            return removalOrderFees[sizeTier];
+        }
+        
+        // Format currency
+        function formatCurrency(amount) {
+            return '$' + amount.toFixed(2);
+        }
+        
+        // Format percentage
+        function formatPercentage(percentage) {
+            return percentage.toFixed(2) + '%';
+        }
+        
+        // Calculate ROI based on selected method
+        function calculateROI(profit, buyCost, customCostsTotal, amazonFees, additionalCosts, type) {
+            const method = document.getElementById(`${type}-roi-method`).value;
+            const sellPrice = parseFloat(document.getElementById(`${type}-sell-price`).value);
+            
+            // Calculate net profit (same for all methods)
+            // Net Profit = Sell Price - Buy Cost - Amazon Fees - Custom Costs - Additional Costs
+            const netProfit = sellPrice - buyCost - amazonFees - customCostsTotal - (additionalCosts || 0);
+            
+            // Calculate investment based on selected method
+            let investment = 0;
+            switch(method) {
+                case 'buy-cost':
+                    // Investment = Buy Cost only
+                    investment = buyCost;
+                    break;
+                case 'buy-cost-custom':
+                    // Investment = Buy Cost + Custom Costs
+                    investment = buyCost + customCostsTotal;
+                    break;
+                case 'total-cost':
+                    // Investment = Buy Cost + Custom Costs + Amazon Fees
+                    investment = buyCost + customCostsTotal + amazonFees;
+                    break;
+            }
+            
+            // ROI = Net Profit / Investment * 100
+            return (netProfit / investment) * 100;
+        }
+        
+        // Update ROI tooltip detail
+        function updateROITooltip(type, profit, buyCost, customCostsTotal, amazonFees, additionalCosts, roi) {
+            const method = document.getElementById(`${type}-roi-method`).value;
+            let investmentDetail = '';
+            let investment = 0;
+            
+            switch(method) {
+                case 'buy-cost':
+                    investment = buyCost;
+                    investmentDetail = `Investment = Buy Cost (${formatCurrency(buyCost)})`;
+                    break;
+                case 'buy-cost-custom':
+                    investment = buyCost + customCostsTotal;
+                    investmentDetail = `Investment = Buy Cost (${formatCurrency(buyCost)}) + Custom Costs (${formatCurrency(customCostsTotal)})`;
+                    break;
+                case 'total-cost':
+                    investment = buyCost + customCostsTotal + amazonFees + (additionalCosts || 0);
+                    investmentDetail = `Investment = Buy Cost (${formatCurrency(buyCost)}) + Custom Costs (${formatCurrency(customCostsTotal)}) + Amazon Fees (${formatCurrency(amazonFees)})${additionalCosts ? ` + Additional Costs (${formatCurrency(additionalCosts)})` : ''}`;
+                    break;
+            }
+            
+            document.getElementById(`${type}-roi-tooltip-detail`).innerHTML = `
+                ${investmentDetail}<br>
+                ROI = (${formatCurrency(profit)} / ${formatCurrency(investment)}) × 100%<br>
+                ROI = ${formatPercentage(roi)}
+            `;
+        }
+        
+        // Calculate FBA fees and profit
+        function calculateFBA() {
+            // Get input values
+            const sellPrice = parseFloat(document.getElementById('fba-sell-price').value);
+            
+            // Automatically set low price checkbox based on sell price
+            const lowPriceCheckbox = document.getElementById('fba-low-price');
+            lowPriceCheckbox.checked = sellPrice < 10;
+            
+            const buyCost = parseFloat(document.getElementById('fba-buy-cost').value);
+            const category = document.getElementById('fba-category').value;
+            const weight = parseFloat(document.getElementById('fba-weight').value);
+            const length = parseFloat(document.getElementById('fba-length').value);
+            const width = parseFloat(document.getElementById('fba-width').value);
+            const height = parseFloat(document.getElementById('fba-height').value);
+            const isDangerous = document.getElementById('fba-dangerous').checked;
+            const isLowPrice = document.getElementById('fba-low-price').checked;
+            const isApparel = category === 'clothing';
+            const storagePeriod = document.getElementById('fba-storage-period').value;
+            const agedDays = document.getElementById('fba-aged-days').value;
+
+            // Calculate and set inbound shipping automatically
+            const calculatedInboundShipping = calculateInboundShippingCost(weight);
+            document.getElementById('fba-inbound-shipping').value = calculatedInboundShipping.toFixed(2);
+            const inboundShipping = calculatedInboundShipping;
+            
+            // Calculate cubic feet
+            const cubicFeet = calculateCubicFeet(length, width, height);
+            
+            // Determine size tier
+            const sizeTier = determineSizeTier(length, width, height, weight);
+            
+            // Calculate fees
+            const referralFee = calculateReferralFee(sellPrice, category);
+            const fulfillmentFee = calculateFulfillmentFee(weight, sizeTier, isApparel, isLowPrice, isDangerous);
+            const storageFee = calculateStorageFee(cubicFeet, storagePeriod, sizeTier);
+            const agedSurcharge = calculateAgedInventorySurcharge(cubicFeet, agedDays);
+            
+            // Custom costs total (including inbound shipping)
+            let customCostsTotal = inboundShipping;
+            fbaCustomCosts.forEach(cost => {
+                customCostsTotal += cost.value;
+            });
+            
+            // Calculate Amazon fees total (excluding inbound shipping as it's now a custom cost)
+            const amazonFees = referralFee + fulfillmentFee + storageFee + agedSurcharge;
+            
+            // Calculate totals
+            const totalCost = buyCost + amazonFees + customCostsTotal;
+            const profit = sellPrice - totalCost;
+            
+            // Calculate ROI with selected method
+            const roi = calculateROI(profit, buyCost, customCostsTotal, amazonFees, 0, 'fba');
+            
+            const margin = (profit / sellPrice) * 100;
+            const breakEvenPrice = totalCost;
+            
+            // Update tooltips with calculation details
+            document.getElementById('fba-profit-tooltip').innerHTML = `
+                Sell Price: ${formatCurrency(sellPrice)}<br>
+                - Referral Fee: ${formatCurrency(referralFee)} (${(categoryFees[category] * 100).toFixed(2)}%)<br>
+                - Fulfillment Fee: ${formatCurrency(fulfillmentFee)}<br>
+                - Storage Fee: ${formatCurrency(storageFee)}<br>
+                - Aged Inventory Surcharge: ${formatCurrency(agedSurcharge)}<br>
+                - Buy Cost: ${formatCurrency(buyCost)}<br>
+                - Inbound Shipping: ${formatCurrency(inboundShipping)}<br>
+                - Custom Costs: ${formatCurrency(customCostsTotal - inboundShipping)}<br>
+                = Profit: ${formatCurrency(profit)}
+            `;
+            
+            // Update ROI tooltip
+            updateROITooltip('fba', profit, buyCost, customCostsTotal, amazonFees, 0, roi);
+            
+            // Update margin tooltip
+            document.getElementById('fba-margin-tooltip').innerHTML = `
+                Margin = (Profit / Sell Price) × 100%<br>
+                Margin = (${formatCurrency(profit)} / ${formatCurrency(sellPrice)}) × 100%<br>
+                Margin = ${formatPercentage(margin)}
+            `;
+            
+            // Update results
+            const profitElement = document.getElementById('fba-profit');
+            profitElement.textContent = formatCurrency(profit);
+            profitElement.className = profit >= 0 ? 'profit-positive' : 'profit-negative';
+            
+            const roiElement = document.getElementById('fba-roi');
+            roiElement.textContent = formatPercentage(roi);
+            roiElement.className = roi >= 0 ? 'profit-positive' : 'profit-negative';
+            
+            const marginElement = document.getElementById('fba-margin');
+            marginElement.textContent = formatPercentage(margin);
+            marginElement.className = margin >= 0 ? 'profit-positive' : 'profit-negative';
+            
+            document.getElementById('fba-breakeven').textContent = formatCurrency(breakEvenPrice);
+        }
+        
+        // Calculate FBM fees and profit
+        function calculateFBM() {
+            // Get input values
+            const sellPrice = parseFloat(document.getElementById('fbm-sell-price').value);
+            const buyCost = parseFloat(document.getElementById('fbm-buy-cost').value);
+            const category = document.getElementById('fbm-category').value;
+            const shippingCost = parseFloat(document.getElementById('fbm-shipping-cost').value);
+            const prepFee = parseFloat(document.getElementById('fbm-prep-fee').value);
+            
+            // Calculate fees
+            const referralFee = calculateReferralFee(sellPrice, category);
+            
+            // Custom costs total (including prep fee and shipping cost)
+            let customCostsTotal = prepFee + shippingCost;
+            fbmCustomCosts.forEach(cost => {
+                customCostsTotal += cost.value;
+            });
+            
+            // Calculate Amazon fees total (referral fee only for FBM)
+            const amazonFees = referralFee;
+            
+            // Calculate totals (no need to add shipping cost separately as it's now in customCostsTotal)
+            const totalCost = buyCost + amazonFees + customCostsTotal;
+            const profit = sellPrice - totalCost;
+            
+            // Calculate ROI with selected method
+            const roi = calculateROI(profit, buyCost, customCostsTotal, amazonFees, 0, 'fbm');
+            
+            const margin = (profit / sellPrice) * 100;
+            const breakEvenPrice = totalCost;
+            
+            // Update tooltips with calculation details
+            document.getElementById('fbm-profit-tooltip').innerHTML = `
+                Sell Price: ${formatCurrency(sellPrice)}<br>
+                - Referral Fee: ${formatCurrency(referralFee)} (${(categoryFees[category] * 100).toFixed(2)}%)<br>
+                - Buy Cost: ${formatCurrency(buyCost)}<br>
+                - Shipping Cost: ${formatCurrency(shippingCost)}<br>
+                - Prep Fee: ${formatCurrency(prepFee)}<br>
+                - Custom Costs: ${formatCurrency(customCostsTotal - prepFee - shippingCost)}<br>
+                = Profit: ${formatCurrency(profit)}
+            `;
+            
+            // Update ROI tooltip
+            updateROITooltip('fbm', profit, buyCost, customCostsTotal, amazonFees, 0, roi);
+            
+            // Update margin tooltip
+            document.getElementById('fbm-margin-tooltip').innerHTML = `
+                Margin = (Profit / Sell Price) × 100%<br>
+                Margin = (${formatCurrency(profit)} / ${formatCurrency(sellPrice)}) × 100%<br>
+                Margin = ${formatPercentage(margin)}
+            `;
+            
+            // Update results
+            const profitElement = document.getElementById('fbm-profit');
+            profitElement.textContent = formatCurrency(profit);
+            profitElement.className = profit >= 0 ? 'profit-positive' : 'profit-negative';
+            
+            const roiElement = document.getElementById('fbm-roi');
+            roiElement.textContent = formatPercentage(roi);
+            roiElement.className = roi >= 0 ? 'profit-positive' : 'profit-negative';
+            
+            const marginElement = document.getElementById('fbm-margin');
+            marginElement.textContent = formatPercentage(margin);
+            marginElement.className = margin >= 0 ? 'profit-positive' : 'profit-negative';
+            
+            document.getElementById('fbm-breakeven').textContent = formatCurrency(breakEvenPrice);
+        }
+        
+        // Calculate all values
+        function calculateAll() {
+            calculateFBA();
+            calculateFBM();
+        }
+        
+        // Add event listeners to all inputs for automatic calculation
+        function addEventListeners() {
+            // Get all input elements
+            const inputs = document.querySelectorAll('input, select');
+            
+            // Add change event listener to each input
+            inputs.forEach(input => {
+                input.addEventListener('input', calculateAll);
+                input.addEventListener('change', calculateAll);
+            });
+
+            // Adicione evento específico para o input de unidades perigosas
+            document.getElementById('fba-dangerous-units').addEventListener('input', updateDangerousTotal);
+        }
+        
+        // Initialize calculations and event listeners on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial calculations
+            calculateAll();
+            
+            // Add event listeners for automatic calculation
+            addEventListeners();
+            
+            // Initialize custom costs lists
+            renderCustomCosts('fba');
+            renderCustomCosts('fbm');
+        });
+
+        // Update sell price with break-even price
+        function updateSellPrice(type) {
+            const breakEvenElement = document.getElementById(`${type}-breakeven`);
+            const sellPriceElement = document.getElementById(`${type}-sell-price`);
+            
+            // Extract numeric value from break-even price
+            const breakEvenPrice = parseFloat(breakEvenElement.textContent.replace('$', ''));
+            
+            // Update sell price
+            sellPriceElement.value = breakEvenPrice.toFixed(2);
+            
+            // Recalculate everything
+            calculateAll();
+        }
+
+        // Adicione esta nova função após calculateFulfillmentFee
+        function updateDangerousTotal() {
+            const units = parseInt(document.getElementById('fba-dangerous-units').value) || 1;
+            const total = (0.21 * units).toFixed(2);
+            document.getElementById('fba-dangerous-total').textContent = total;
+            if (document.getElementById('fba-dangerous').checked) {
+                calculateAll();
+            }
+        }
+
+        // Funções para o sistema de abas
+        function switchTab(tab) {
+            // Remove active class de todas as abas
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            
+            // Remove active class de todas as calculadoras
+            document.getElementById('fees-calculator').classList.remove('active');
+            document.getElementById('ppc-calculator').classList.remove('active');
+            
+            // Adiciona active class na aba selecionada
+            if (tab === 'fees') {
+                document.querySelector('.tab:first-child').classList.add('active');
+                document.getElementById('fees-calculator').classList.add('active');
+            } else {
+                document.querySelector('.tab:last-child').classList.add('active');
+                document.getElementById('ppc-calculator').classList.add('active');
+            }
+        }
+        
+        // Funções para a PPC Calculator
+        function calculatePPC() {
+            // Valores de entrada da campanha
+            const dailyBudget = parseFloat(document.getElementById('daily-budget').value) || 0;
+            const campaignDays = parseInt(document.getElementById('campaign-days').value) || 0;
+            const targetAcos = parseFloat(document.getElementById('target-acos').value) || 0;
+            const avgCpc = parseFloat(document.getElementById('avg-cpc').value) || 0;
+            
+            // Valores de entrada do produto
+            const sellingPrice = parseFloat(document.getElementById('selling-price').value) || 0;
+            const landedCost = parseFloat(document.getElementById('landed-cost').value) || 0;
+            const amazonFees = parseFloat(document.getElementById('amazon-fees').value) || 0;
+            const conversionRate = parseFloat(document.getElementById('conversion-rate').value) || 0;
+
+            // Cálculos da campanha
+            const totalBudget = dailyBudget * campaignDays;
+            const dailyClicks = avgCpc > 0 ? Math.floor(dailyBudget / avgCpc) : 0;
+            const totalClicks = dailyClicks * campaignDays;
+            const requiredSales = targetAcos > 0 ? (totalBudget / (targetAcos / 100)) : 0;
+
+            // Cálculos de lucratividade
+            const netProfit = sellingPrice - (landedCost + amazonFees);
+            const breakevenAcos = (netProfit / sellingPrice) * 100;
+            const clicksPerSale = conversionRate > 0 ? (100 / conversionRate) : 0;
+            const maxBid = (netProfit / clicksPerSale);
+
+            // Atualização dos resultados da campanha
+            document.getElementById('total-budget').textContent = formatCurrency(totalBudget);
+            document.getElementById('daily-clicks').textContent = dailyClicks;
+            document.getElementById('total-clicks').textContent = totalClicks;
+            document.getElementById('required-sales').textContent = formatCurrency(requiredSales);
+
+            // Atualização dos resultados de lucratividade
+            document.getElementById('net-profit').textContent = formatCurrency(netProfit);
+            document.getElementById('breakeven-acos').textContent = formatPercentage(breakevenAcos);
+            document.getElementById('clicks-per-sale').textContent = clicksPerSale.toFixed(1);
+            document.getElementById('max-bid').textContent = formatCurrency(maxBid);
+        }
+
+        function resetPPC() {
+            // Reset dos campos de entrada
+            document.getElementById('daily-budget').value = '10';
+            document.getElementById('campaign-days').value = '30';
+            document.getElementById('target-acos').value = '25';
+            document.getElementById('avg-cpc').value = '0.50';
+            document.getElementById('selling-price').value = '0';
+            document.getElementById('landed-cost').value = '0';
+            document.getElementById('amazon-fees').value = '0';
+            document.getElementById('conversion-rate').value = '10';
+
+            // Recalcula com os valores padrão
+            calculatePPC();
+        }
+    </script>
+</body>
+</html>
